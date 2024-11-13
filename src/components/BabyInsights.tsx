@@ -60,6 +60,50 @@ interface BabyInsightsProps {
 
 const COLORS = ['#E728AB', '#9850FF', '#00C9FF', '#FF9800'];
 
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    value: number;
+    name: string;
+    color: string;
+  }>;
+  label?: string | number | Date;
+}
+
+interface LegendPayload {
+  value: any;
+  type?: string;
+  id?: string;
+  color?: string;
+  payload?: {
+    dataKey?: string;
+    value?: any;
+    strokeDasharray?: string;
+  };
+}
+
+interface ChartData {
+  date: Date;
+  feeds: number;
+  diapers: number;
+  sleepHours: number;
+}
+
+// Add this interface for the Legend entry
+interface LegendEntry {
+  value: string;
+  type?: string;
+  id?: string;
+  color?: string;
+  dataKey?: string;
+  payload?: {
+    strokeDasharray?: string;
+    value?: any;
+    dataKey?: string;
+    color?: string;
+  };
+}
+
 export const BabyInsights = ({ activities, babyName }: BabyInsightsProps) => {
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.100', 'gray.700');
@@ -119,8 +163,8 @@ export const BabyInsights = ({ activities, babyName }: BabyInsightsProps) => {
   // Add zoom capability to charts
   const [chartZoom, setChartZoom] = useState(1);
 
-  // Add tooltip content
-  const CustomTooltip = ({ active, payload, label }) => {
+  // Update tooltip with proper types
+  const CustomTooltip = ({ active, payload, label }: TooltipProps) => {
     if (active && payload && payload.length) {
       return (
         <Box
@@ -132,7 +176,7 @@ export const BabyInsights = ({ activities, babyName }: BabyInsightsProps) => {
           borderColor={borderColor}
         >
           <Text fontWeight="bold">
-            {format(label, 'MMM d, yyyy')}
+            {label instanceof Date ? format(label, 'MMM d, yyyy') : label}
           </Text>
           {payload.map((entry, index) => (
             <Text key={index} color={entry.color}>
@@ -146,9 +190,9 @@ export const BabyInsights = ({ activities, babyName }: BabyInsightsProps) => {
   };
 
   // Add interactive legends
-  const [hiddenSeries, setHiddenSeries] = useState(new Set());
+  const [hiddenSeries, setHiddenSeries] = useState<Set<string>>(new Set());
 
-  const toggleSeries = (dataKey) => {
+  const toggleSeries = (dataKey: string): void => {
     const newHidden = new Set(hiddenSeries);
     if (newHidden.has(dataKey)) {
       newHidden.delete(dataKey);
@@ -160,6 +204,30 @@ export const BabyInsights = ({ activities, babyName }: BabyInsightsProps) => {
 
   // Add interactive filters
   const [dateRange, setDateRange] = useState('week'); // 'week', 'month', 'year'
+
+  // Update the Legend click handler
+  const handleLegendClick = (data: LegendPayload) => {
+    if (data?.payload?.dataKey) {
+      toggleSeries(data.payload.dataKey);
+    }
+  };
+
+  // Update the Legend formatter
+  const formatLegend = (value: string, entry: LegendPayload) => {
+    const dataKey = entry?.payload?.dataKey;
+    if (!dataKey) return value;
+
+    return (
+      <Text
+        as="span"
+        color={hiddenSeries.has(dataKey) ? 'gray.400' : entry.color}
+        cursor="pointer"
+        _hover={{ textDecoration: 'underline' }}
+      >
+        {value}
+      </Text>
+    );
+  };
 
   return (
     <VStack spacing={8} w="full">
@@ -312,17 +380,10 @@ export const BabyInsights = ({ activities, babyName }: BabyInsightsProps) => {
                       <YAxis />
                       <Tooltip content={<CustomTooltip />} />
                       <Legend 
-                        onClick={(e) => toggleSeries(e.dataKey)}
-                        formatter={(value, entry) => (
-                          <Text
-                            as="span"
-                            color={hiddenSeries.has(entry.dataKey) ? 'gray.400' : entry.color}
-                            cursor="pointer"
-                            _hover={{ textDecoration: 'underline' }}
-                          >
-                            {value}
-                          </Text>
-                        )}
+                        // @ts-ignore
+                        onClick={handleLegendClick}
+                        // @ts-ignore
+                        formatter={formatLegend}
                       />
                       {!hiddenSeries.has('feeds') && (
                         <Area
