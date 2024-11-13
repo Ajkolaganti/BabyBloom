@@ -20,6 +20,7 @@ import { format } from 'date-fns';
 import { BabyInsights } from '@/components/BabyInsights';
 import { BabyHeader } from '@/components/BabyHeader';
 import { Footer } from '@/components/Footer';
+import { NotificationSettings } from '../components/NotificationSettings';
 
 const activityService = new ActivityService();
 const babyService = new BabyService();
@@ -152,6 +153,7 @@ export default function Dashboard({ onGenderChange }: DashboardProps) {
             <TabList>
               <Tab>Insights</Tab>
               <Tab>History</Tab>
+              <Tab>Notification Settings</Tab>
             </TabList>
 
             <TabPanels>
@@ -167,6 +169,10 @@ export default function Dashboard({ onGenderChange }: DashboardProps) {
                   activities={activities} 
                   onSuccess={fetchActivities}
                 />
+              </TabPanel>
+
+              <TabPanel>
+                <NotificationSettings babyId={selectedBaby?.id || ''} />
               </TabPanel>
             </TabPanels>
           </Tabs>
