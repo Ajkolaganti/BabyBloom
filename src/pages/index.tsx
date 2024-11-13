@@ -5,19 +5,20 @@ import { ProtectedRoute } from '../components/ProtectedRoute';
 import Landing from './landing';
 import Dashboard from './dashboard';
 
-export default function Home() {
+interface HomeProps {
+  onGenderChange: (gender: string) => void;
+}
+
+export default function Home({ onGenderChange }: HomeProps) {
   const { user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // If user is already logged in and tries to access landing page,
-    // redirect them to dashboard
     if (user && router.pathname === '/') {
       router.push('/dashboard');
     }
   }, [user, router]);
 
-  // Show landing page for non-authenticated users
   if (!user) {
     return (
       <ProtectedRoute isPublic>
@@ -26,10 +27,9 @@ export default function Home() {
     );
   }
 
-  // Show dashboard for authenticated users
   return (
     <ProtectedRoute>
-      <Dashboard />
+      <Dashboard onGenderChange={onGenderChange} />
     </ProtectedRoute>
   );
 }
