@@ -3,13 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB76e5SloZEpxwirBU7pCLf3-U65wQix6c",
-    authDomain: "babybloom-312c0.firebaseapp.com",
-    projectId: "babybloom-312c0",
-    storageBucket: "babybloom-312c0.firebasestorage.app",
-    messagingSenderId: "541112200835",
-    appId: "1:541112200835:web:9e74cfe7504dbe6a6bf5b6",
-    measurementId: "G-EPF7G5MS7H"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase only if it hasn't been initialized already
