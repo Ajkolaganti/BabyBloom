@@ -1,13 +1,29 @@
 {
-  "name": "BabyDiary",
-  "short_name": "BabyDiary",
-  "description": "Track your baby's daily activities",
-  "start_url": "/",
+  "name": "BabyBloom - Baby Tracker",
+  "short_name": "BabyBloom",
+  "description": "Track your baby's daily activities - feeding, sleep, and diaper changes",
+  "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#e728ab",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["health", "lifestyle", "medical"],
+  "screenshots": [
+    {
+      "src": "/dashboard-preview.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
   "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
@@ -22,5 +38,29 @@
     }
   ],
   "gcm_sender_id": "103953800507",
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "Track Feeding",
+      "short_name": "Feed",
+      "description": "Quick track feeding",
+      "url": "/dashboard?action=feed",
+      "icons": [{ "src": "/favicon.ico", "sizes": "48x48" }]
+    },
+    {
+      "name": "Track Sleep",
+      "short_name": "Sleep",
+      "description": "Quick track sleep",
+      "url": "/dashboard?action=sleep",
+      "icons": [{ "src": "/favicon.ico", "sizes": "48x48" }]
+    },
+    {
+      "name": "Change Diaper",
+      "short_name": "Diaper",
+      "description": "Quick track diaper change",
+      "url": "/dashboard?action=diaper",
+      "icons": [{ "src": "/favicon.ico", "sizes": "48x48" }]
+    }
+  ]
 } 

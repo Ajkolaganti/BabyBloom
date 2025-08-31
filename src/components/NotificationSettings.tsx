@@ -42,12 +42,25 @@ export const NotificationSettings = ({ babyId }: NotificationSettingsProps) => {
     setLoading(true);
     try {
       if (!user) throw new Error('User not authenticated');
-      await notificationService.requestPermission(user.uid);
-      toast({
-        title: 'Notifications enabled',
-        status: 'success',
-        duration: 3000,
-      });
+      
+      const granted = await notificationService.requestPermission();
+      if (granted) {
+        toast({
+          title: 'Notifications enabled',
+          description: 'You will now receive baby care reminders',
+          status: 'success',
+          duration: 3000,
+        });
+        // Enable the schedule automatically when permission is granted
+        setSchedule(prev => ({ ...prev, enabled: true }));
+      } else {
+        toast({
+          title: 'Notifications not enabled',
+          description: 'Please allow notifications in your browser settings',
+          status: 'warning',
+          duration: 5000,
+        });
+      }
     } catch (error) {
       toast({
         title: 'Error enabling notifications',

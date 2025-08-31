@@ -21,6 +21,7 @@ import { BabyInsights } from '@/components/BabyInsights';
 import { BabyHeader } from '@/components/BabyHeader';
 import { Footer } from '@/components/Footer';
 import { NotificationSettings } from '../components/NotificationSettings';
+import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 
 const activityService = new ActivityService();
 const babyService = new BabyService();
@@ -38,6 +39,19 @@ export default function Dashboard({ onGenderChange }: DashboardProps) {
   const [babies, setBabies] = useState<Baby[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
+
+  // Handle PWA shortcut actions
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('action');
+    
+    if (action && ['feed', 'sleep', 'diaper'].includes(action)) {
+      // Auto-open the activity form when coming from PWA shortcut
+      setTimeout(() => {
+        onOpen();
+      }, 1000); // Small delay to ensure component is ready
+    }
+  }, [onOpen]);
 
   const loadBabies = useCallback(async () => {
     try {
@@ -209,6 +223,7 @@ export default function Dashboard({ onGenderChange }: DashboardProps) {
           </Button>
 
           <Footer />
+          <PWAInstallPrompt />
         </VStack>
       </Box>
     </ProtectedRoute>

@@ -1,6 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
     apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -17,4 +18,37 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export { app, auth, db }; 
+// Initialize messaging for PWA notifications
+let messaging: any = null;
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  messaging = getMessaging(app);
+}
+
+// Notification helper functions
+export const requestNotificationPermission = async () => {
+  try {
+    if (!messaging) return null;
+    
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      const token = await getToken(messaging, {
+        vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY
+      });
+      return token;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting notification permission:', error);
+    return null;
+  }
+};
+
+export const onMessageListener = () => 
+  new Promise((resolve) => {
+    if (!messaging) return;
+    onMessage(messaging, (payload) => {
+      resolve(payload);
+    });
+  });
+
+export { app, auth, db, messaging, firebaseConfig }; 

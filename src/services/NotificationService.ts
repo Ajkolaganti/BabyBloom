@@ -42,8 +42,29 @@ class NotificationService {
 
   async requestPermission() {
     try {
+      if (!('Notification' in window)) {
+        console.log('This browser does not support notifications');
+        return false;
+      }
+
+      if (Notification.permission === 'granted') {
+        return true;
+      }
+
+      if (Notification.permission === 'denied') {
+        console.log('Notifications are blocked by the user');
+        return false;
+      }
+
       const permission = await Notification.requestPermission();
-      return permission === 'granted';
+      if (permission === 'granted') {
+        // Also register service worker for background notifications
+        if ('serviceWorker' in navigator) {
+          await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+        }
+        return true;
+      }
+      return false;
     } catch (error) {
       console.error('Error requesting notification permission:', error);
       return false;
